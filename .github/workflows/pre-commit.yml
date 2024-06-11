@@ -49,11 +49,11 @@ jobs:
       - name: Setup Terraform Lint
         uses: terraform-linters/setup-tflint@v4
 
-      - name: Setup Terraform Docs
-        run: |
-          curl -sSLo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/${{ env.TERRAFORM_DOCS_VERSION }}/terraform-docs-${{ env.TERRAFORM_DOCS_VERSION }}-$(uname)-amd64.tar.gz
-          sudo tar -xzf terraform-docs.tar.gz -C /usr/bin/ terraform-docs
-          rm terraform-docs.tar.gz 2> /dev/null
+      # - name: Setup Terraform Docs
+      #   run: |
+      #     curl -sSLo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/${{ env.TERRAFORM_DOCS_VERSION }}/terraform-docs-${{ env.TERRAFORM_DOCS_VERSION }}-$(uname)-amd64.tar.gz
+      #     sudo tar -xzf terraform-docs.tar.gz -C /usr/bin/ terraform-docs
+      #     rm terraform-docs.tar.gz 2> /dev/null
 
       - name: Run pre-commit checks
         run: pre-commit run --all-files
