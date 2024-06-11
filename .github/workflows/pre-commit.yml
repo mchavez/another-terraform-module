@@ -1,0 +1,59 @@
+name: pre-commit-checks
+
+# Doc: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  # Doc: https://github.com/hashicorp/terraform
+  TERRAFORM_VERSION: 1.6.6
+  # Doc: https://github.com/terraform-docs/terraform-docs
+  TERRAFORM_DOCS_VERSION: v0.17.0
+
+jobs:
+  pre-commit-checks:
+    runs-on: ubuntu-latest
+    steps:
+      # Doc: https://github.com/marketplace/actions/checkout
+      - name: Checkout ${{ github.repository }}
+        uses: actions/checkout@v4
+
+      # Doc: https://github.com/marketplace/actions/setup-python
+      - name: Setup Python
+        uses: actions/setup-python@v4
+
+      # Doc: https://github.com/marketplace/actions/cache
+      - name: Restore pre-commit cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+
+      # Install pre-commit
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      # Doc: https://github.com/marketplace/actions/hashicorp-setup-terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      # Doc: https://github.com/marketplace/actions/setup-tflint
+      - name: Setup Terraform Lint
+        uses: terraform-linters/setup-tflint@v4
+
+      - name: Setup Terraform Docs
+        run: |
+          curl -sSLo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/${{ env.TERRAFORM_DOCS_VERSION }}/terraform-docs-${{ env.TERRAFORM_DOCS_VERSION }}-$(uname)-amd64.tar.gz
+          sudo tar -xzf terraform-docs.tar.gz -C /usr/bin/ terraform-docs
+          rm terraform-docs.tar.gz 2> /dev/null
+
+      - name: Run pre-commit checks
+        run: pre-commit run --all-files
