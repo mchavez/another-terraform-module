@@ -30,5 +30,5 @@ jobs:
           github_token: ${{ secrets.REPO_SYNC_PAT }}
           source_repo_path: ${{ env.SOURCE_REPOSITORY }}
           upstream_branch: ${{ env.SOURCE_BRANCH }}
-          pr_title: "[actions-template-sync] Upstream template update"
-          pr_commit_msg: "chore(template): upstream template update"
+          pr_title: "Fix release to work with goreleaser v2"
+          pr_commit_msg: "Fix release to work with goreleaser v2"
